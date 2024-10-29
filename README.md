@@ -1,15 +1,20 @@
-# Elysia with Bun runtime
+# Simple-Elysia with Bun
 
-## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
-```
-
-## Development
-To start the development server run:
-```bash
-bun run dev
-```
-
-Open http://localhost:3000/ with your browser to see the result.
+1. Install Bun runtime
+2. Install dependencies
+    ```shell
+    bun install
+    ```
+3. Ensure ENV is available
+    ```shell
+    cp .env.example .env
+    ```
+4. Ensure DB is migrated
+    ```shell
+    # checkout `db.sqlite` file  
+    bun db:generate
+    ```
+5. Run the server
+    ```shell
+    bun dev
+    ```
