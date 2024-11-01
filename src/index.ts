@@ -9,8 +9,12 @@ import { eq } from "drizzle-orm";
 import bearer from "@elysiajs/bearer";
 import { users } from "./schema";
 import { logger } from "@bogeychan/elysia-logger";
+import cors from "@elysiajs/cors";
 
 const app = new Elysia()
+    .use(cors({
+        origin: true
+    }))
     .use(
         jwt({
             secret: env.AUTH_SECRET,
