@@ -32,7 +32,7 @@ export const authMacro = new Elysia({
         };
     })
     .macro(({ onBeforeHandle }) => ({
-        isAuthenticated: (required?: boolean) => {
+        isProtected: (required?: boolean) => {
             onBeforeHandle(async ({ User, error }) => {
                 if (required !== true) {
                     return;

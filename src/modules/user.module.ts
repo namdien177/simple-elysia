@@ -33,7 +33,7 @@ const userModule = new Elysia({
             return error(404, "Not Found");
         },
         {
-            isAuthenticated: true,
+            isProtected: true,
             summary: "Get User Profile",
             description: "Returns the authenticated user's profile",
             detail: {
@@ -79,7 +79,7 @@ const userModule = new Elysia({
             }
         },
         {
-            isAuthenticated: true,
+            isProtected: true,
             body: t.Object({
                 username: t.Optional(t.String()),
                 email: t.Optional(t.String({ format: "email" })),

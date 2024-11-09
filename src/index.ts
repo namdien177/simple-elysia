@@ -8,12 +8,12 @@ import cors from "@elysiajs/cors";
 import authModule from "./modules/auth.module";
 import userModule from "./modules/user.module";
 import bucketModule from "./modules/bucket.module";
-import todoItemModule from "./modules/todo-item.module";
+import bucketItemModule from "./modules/bucket-item.module";
 
 const app = new Elysia()
     .use(
         cors({
-            origin: true,
+            origin: "*",
         }),
     )
     .use(
@@ -29,6 +29,10 @@ const app = new Elysia()
                     { name: "Auth", description: "Authentication endpoints" },
                     { name: "User", description: "User endpoints" },
                     { name: "Bucket", description: "Bucket endpoints" },
+                    {
+                        name: "Bucket Items",
+                        description: "Bucket Item endpoints",
+                    },
                 ],
             },
         }),
@@ -41,7 +45,7 @@ const app = new Elysia()
     .use(authModule)
     .use(userModule)
     .use(bucketModule)
-    .use(todoItemModule)
+    .use(bucketItemModule)
     .listen(3000, () => {
         console.log("Server started on port 3000");
         console.log("Swagger UI available at http://localhost:3000/swagger");

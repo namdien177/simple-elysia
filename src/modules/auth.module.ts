@@ -12,6 +12,7 @@ const authModule = new Elysia({
     .use(
         jwt({
             secret: env.AUTH_SECRET,
+            exp: "1d",
         }),
     )
     .post(

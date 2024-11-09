@@ -44,10 +44,10 @@ export const todoItemRelations = relations(todoItems, ({ one, many }) => ({
     parent: one(todoItems, {
         fields: [todoItems.parentId],
         references: [todoItems.id],
-        relationName: "parent",
+        relationName: "nesting",
     }),
     children: many(todoItems, {
-        relationName: "children",
+        relationName: "nesting",
     }),
     attachments: many(todoItemAttachments),
 }));

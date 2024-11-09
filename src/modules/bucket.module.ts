@@ -7,11 +7,15 @@ import { todoBuckets } from "../schema";
 
 const bucketModule = new Elysia({
     name: "bucket-module",
+    prefix: "buckets",
 })
     .use(authMacro)
+    .guard({
+        isProtected: true,
+    })
     // CRUD operations for todo buckets
     .get(
-        "buckets",
+        "",
         async ({ User, query }) => {
             assert(User?.id !== null && User.id !== undefined);
             const userId = User.id;
@@ -38,7 +42,6 @@ const bucketModule = new Elysia({
             };
         },
         {
-            isAuthenticated: true,
             query: t.Object({
                 page: t.Number({
                     default: 1,
@@ -58,7 +61,12 @@ const bucketModule = new Elysia({
                         description: "Search query",
                     }),
                 ),
-                visibility: t.Optional(t.UnionEnum(["public", "private"])),
+                visibility: t.Optional(
+                    t.Enum({
+                        PUBLIC: "public",
+                        PRIVATE: "private",
+                    }),
+                ),
             }),
             detail: {
                 tags: ["Bucket"],
@@ -67,7 +75,7 @@ const bucketModule = new Elysia({
         },
     )
     .post(
-        "buckets",
+        "",
         async ({ User, body, error }) => {
             // assert
             assert(User?.id !== null && User.id !== undefined);
@@ -112,7 +120,6 @@ const bucketModule = new Elysia({
             };
         },
         {
-            isAuthenticated: true,
             body: t.Object({
                 title: t.String({
                     minLength: 1,
@@ -131,7 +138,7 @@ const bucketModule = new Elysia({
         },
     )
     .get(
-        "buckets/:bucketId",
+        ":bucketId",
         async ({ User, params, error }) => {
             assert(User?.id !== null && User.id !== undefined);
             const userId = User.id;
@@ -160,7 +167,6 @@ const bucketModule = new Elysia({
             };
         },
         {
-            isAuthenticated: true,
             params: t.Object({
                 bucketId: t.Number({
                     description: "Bucket id",
@@ -175,7 +181,7 @@ const bucketModule = new Elysia({
         },
     )
     .patch(
-        "buckets/:bucketId",
+        ":bucketId",
         async ({ User, params, body, error }) => {
             assert(User?.id !== null && User.id !== undefined);
             const userId = User.id;
@@ -221,7 +227,6 @@ const bucketModule = new Elysia({
             };
         },
         {
-            isAuthenticated: true,
             params: t.Object({
                 bucketId: t.Number({
                     description: "Bucket id",
@@ -246,7 +251,7 @@ const bucketModule = new Elysia({
         },
     )
     .delete(
-        "buckets/:bucketId",
+        ":bucketId",
         async ({ User, params, error }) => {
             assert(User?.id !== null && User.id !== undefined);
             const userId = User.id;
@@ -285,7 +290,6 @@ const bucketModule = new Elysia({
             };
         },
         {
-            isAuthenticated: true,
             params: t.Object({
                 bucketId: t.Number({
                     description: "Bucket id",
