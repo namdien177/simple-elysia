@@ -6,7 +6,8 @@
     "dev": "bun run --watch src/index.ts",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:drop": "drizzle-kit drop"
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.4",
@@ -20,6 +21,7 @@
     "elysia": "latest"
   },
   "devDependencies": {
+    "@libsql/client": "^0.14.0",
     "@types/bcrypt": "^5.0.2",
     "bun-types": "latest",
     "drizzle-kit": "^0.26.2",
