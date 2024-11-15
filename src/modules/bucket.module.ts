@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { authMacro } from "../pre-handle/auth.macro";
 import assert from "node:assert";
 import db from "../db";
-import { and, eq, like, or, SQLWrapper } from "drizzle-orm";
+import { and, count, desc, eq, like, or, SQLWrapper } from "drizzle-orm";
 import { todoBuckets } from "../schema";
 
 const bucketModule = new Elysia({
@@ -21,24 +21,39 @@ const bucketModule = new Elysia({
             const userId = User.id;
             const { page, limit, query: searchQuery, visibility } = query;
             // Fetch todo buckets
+
+            type KeyOfTodoBuckets = keyof typeof todoBuckets.$inferSelect;
+
+            const conditionFn = (
+                tb: Pick<typeof todoBuckets, KeyOfTodoBuckets>,
+            ) => {
+                const filters: Array<SQLWrapper> = [];
+                filters.push(eq(tb.userId, userId));
+
+                if (searchQuery) {
+                    filters.push(like(tb.title, `%${searchQuery}%`));
+                }
+                if (visibility) {
+                    filters.push(eq(tb.public, visibility === "public"));
+                }
+                return and(...filters);
+            };
+
             const buckets = await db.query.todoBuckets.findMany({
-                where: (tb) => {
-                    const filters: Array<SQLWrapper> = [];
-                    filters.push(eq(tb.userId, userId));
-                    if (searchQuery) {
-                        filters.push(like(tb.title, `%${searchQuery}%`));
-                    }
-                    if (visibility) {
-                        filters.push(eq(tb.public, visibility === "public"));
-                    }
-                    return and(...filters);
-                },
+                where: conditionFn,
                 limit,
                 offset: (page - 1) * limit,
+                orderBy: [desc(todoBuckets.createdAt)],
             });
+
+            const [total] = await db
+                .select({ count: count() })
+                .from(todoBuckets)
+                .where(conditionFn(todoBuckets));
 
             return {
                 data: buckets,
+                total: total?.count ?? 0,
             };
         },
         {

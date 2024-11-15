@@ -46,7 +46,7 @@ const app = new Elysia()
     .use(userModule)
     .use(bucketModule)
     .use(bucketItemModule)
-    .listen(3000, () => {
-        console.log("Server started on port 3000");
-        console.log("Swagger UI available at http://localhost:3000/swagger");
+    .listen(process.env.PORT ?? 3000, (server) => {
+        console.log(`Server started on port ${server.port}`);
+        console.log(`Swagger UI available at http://${server.hostname}:${server.port}/swagger`);
     });

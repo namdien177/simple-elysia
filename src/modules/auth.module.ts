@@ -4,7 +4,7 @@ import env from "../env";
 import { users } from "../schema";
 import db from "../db";
 import { eq } from "drizzle-orm";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const authModule = new Elysia({
     name: "auth-module",

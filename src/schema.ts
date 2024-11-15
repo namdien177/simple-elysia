@@ -1,5 +1,6 @@
 import { blob, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
+import { DateString } from "./helpers";
 
 export const users = sqliteTable("users", {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -7,6 +8,11 @@ export const users = sqliteTable("users", {
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
     avatar: blob("avatar").$type<string>(),
+    createdAt: text("created_at")
+        .notNull()
+        .default(sql`(current_timestamp)`)
+        .$type<DateString>(),
+    updatedAt: text("updated_at").$type<DateString | null>(),
 });
 
 export const userRelations = relations(users, ({ many }) => ({
@@ -18,6 +24,11 @@ export const todoBuckets = sqliteTable("todo_buckets", {
     userId: integer("user_id").notNull(),
     title: text("title").notNull(),
     public: integer("public", { mode: "boolean" }).notNull(),
+    createdAt: text("created_at")
+        .notNull()
+        .default(sql`(current_timestamp)`)
+        .$type<DateString>(),
+    updatedAt: text("updated_at").$type<DateString | null>(),
 });
 
 export const todoBucketRelations = relations(todoBuckets, ({ one, many }) => ({
@@ -34,6 +45,11 @@ export const todoItems = sqliteTable("todo_items", {
     parentId: integer("parent_id").$type<number | null>(),
     content: text("content").notNull(),
     done: integer("done", { mode: "boolean" }).notNull(),
+    createdAt: text("created_at")
+        .notNull()
+        .default(sql`(current_timestamp)`)
+        .$type<DateString>(),
+    updatedAt: text("updated_at").$type<DateString | null>(),
 });
 
 export const todoItemRelations = relations(todoItems, ({ one, many }) => ({
@@ -57,6 +73,11 @@ export const todoItemAttachments = sqliteTable("todo_item_attachments", {
     todoItemId: integer("todo_item_id").notNull(),
     fileName: text("file_name").notNull(),
     data: blob("data").$type<string>(),
+    createdAt: text("created_at")
+        .notNull()
+        .default(sql`(current_timestamp)`)
+        .$type<DateString>(),
+    updatedAt: text("updated_at").$type<DateString | null>(),
 });
 
 export const todoItemAttachmentRelations = relations(

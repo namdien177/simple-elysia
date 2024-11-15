@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { authMacro } from "../pre-handle/auth.macro";
 import assert from "node:assert";
 import db from "../db";
-import { and, eq, like, SQLWrapper } from "drizzle-orm";
+import { and, count, eq, like, SQLWrapper } from "drizzle-orm";
 import { todoBuckets, todoItems } from "../schema";
 
 const bucketItemModule = new Elysia({
@@ -56,27 +56,35 @@ const bucketItemModule = new Elysia({
                     async ({ Bucket, query }) => {
                         const { page, limit, query: searchQuery, done } = query;
 
+                        type KeyofTodoItems = keyof typeof todoItems.$inferSelect;
+
+                        const conditionsFn = (tb: Pick<typeof todoItems, KeyofTodoItems>) => {
+                            const filters: Array<SQLWrapper> = [];
+                            filters.push(eq(tb.bucketId, Bucket.id));
+                            if (searchQuery) {
+                                filters.push(
+                                    like(tb.content, `%${searchQuery}%`),
+                                );
+                            }
+                            if (done !== undefined) {
+                                filters.push(eq(tb.done, done === 1));
+                            }
+                            return and(...filters);
+                        }
+
                         // Fetch todo items
                         const items = await db.query.todoItems.findMany({
-                            where: (ti) => {
-                                const filters: Array<SQLWrapper> = [];
-                                filters.push(eq(ti.bucketId, Bucket.id));
-                                if (searchQuery) {
-                                    filters.push(
-                                        like(ti.content, `%${searchQuery}%`),
-                                    );
-                                }
-                                if (done !== undefined) {
-                                    filters.push(eq(ti.done, done === 1));
-                                }
-                                return and(...filters);
-                            },
+                            where: conditionsFn,
                             limit,
                             offset: (page - 1) * limit,
                         });
+                        const [total] = await db.select({count: count()})
+                            .from(todoItems)
+                            .where(conditionsFn(todoItems))
 
                         return {
                             data: items,
+                            total: total?.count ?? 0
                         };
                     },
                     {

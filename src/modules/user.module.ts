@@ -3,7 +3,7 @@ import { authMacro } from "../pre-handle/auth.macro";
 import db from "../db";
 import { eq } from "drizzle-orm";
 import { users } from "../schema";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import assert from "node:assert";
 
 const userModule = new Elysia({
