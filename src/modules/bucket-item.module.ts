@@ -108,7 +108,7 @@ const bucketItemModule = new Elysia({
                                 }),
                             ),
                             done: t.Optional(
-                                t.Integer({
+                                t.Numeric({
                                     description:
                                         "Done status of the todo item, 0 for false, 1 for true",
                                 }),
