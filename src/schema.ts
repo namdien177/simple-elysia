@@ -7,7 +7,7 @@ export const users = sqliteTable("users", {
     username: text("username").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
-    avatar: blob("avatar").$type<string>(),
+    avatar: blob("avatar").$type<Buffer>(),
     createdAt: text("created_at")
         .notNull()
         .default(sql`(current_timestamp)`)

@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { users } from "../schema";
 import bcrypt from "bcryptjs";
 import assert from "node:assert";
+import { fileTypeFromBuffer } from "file-type";
 
 const userModule = new Elysia({
     name: "user-module",
@@ -21,12 +22,20 @@ const userModule = new Elysia({
             });
 
             if (user) {
+                let blobAvatar = user.avatar;
+                let avatar: string | undefined;
+
+                if (blobAvatar) {
+                    // made the user to query the avatar separately
+                    avatar = `/me/avatar`;
+                }
+
                 return {
                     id: user.id,
                     username: user.username,
                     email: user.email,
                     // Return avatar as a Base64 string if it exists
-                    avatar: user.avatar ?? undefined,
+                    avatar,
                 };
             }
 
@@ -36,6 +45,48 @@ const userModule = new Elysia({
             isProtected: true,
             summary: "Get User Profile",
             description: "Returns the authenticated user's profile",
+            detail: {
+                tags: ["User"],
+            },
+        },
+    )
+    .get(
+        "/me/avatar",
+        // Get the authenticated user's avatar only
+        async ({ User, error }) => {
+            assert(User.id !== null);
+
+            // Fetch the user from the database
+            const user = await db.query.users.findFirst({
+                where: eq(users.id, User.id),
+                columns: {
+                    avatar: true,
+                },
+            });
+
+            if (user) {
+                let blobAvatar = user.avatar;
+                let avatar: string | undefined;
+
+                if (blobAvatar) {
+                    avatar = blobAvatar.toString("base64");
+                    const fileType = await fileTypeFromBuffer(blobAvatar);
+                    if (!fileType) {
+                        return error(500, "Internal Server Error");
+                    }
+                    // return image as base64 string
+                    let prefix = `data:${fileType.mime};base64,`;
+                    return prefix + avatar;
+                }
+            }
+
+            return error(404, "Not Found");
+        },
+        {
+            isProtected: true,
+            summary: "Get User Avatar",
+            description:
+                "Returns the authenticated user's avatar as a Base64 string",
             detail: {
                 tags: ["User"],
             },
