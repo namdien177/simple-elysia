@@ -11,8 +11,9 @@ RUN bun install
 COPY ./src ./src
 
 ENV NODE_ENV=production
-ENV AUTH_SECRET=your_secret
-ENV DB_FILE_NAME=db.sqlite
+ENV AUTH_SECRET=${project.AUTH_SECRET | 'secret'}
+ENV TURSO_CONNECTION_URL=${project.TURSO_CONNECTION_URL | 'libsql://elysia-namdien177.turso.io'}
+ENV TURSO_AUTH_TOKEN=${project.TURSO_AUTH_TOKEN | 'your_token'}
 
 RUN bun build \
 	--compile \
@@ -31,8 +32,9 @@ COPY ./drizzle ./drizzle
 COPY ./drizzle.config.ts ./drizzle.config.ts
 
 ENV NODE_ENV=production
-ENV AUTH_SECRET=your_secret
-ENV DB_FILE_NAME=db.sqlite
+ENV AUTH_SECRET=${project.AUTH_SECRET | 'secret'}
+ENV TURSO_CONNECTION_URL=${project.TURSO_CONNECTION_URL | 'libsql://elysia-namdien177.turso.io'}
+ENV TURSO_AUTH_TOKEN=${project.TURSO_AUTH_TOKEN | 'your_token'}
 
 EXPOSE 3000
 
