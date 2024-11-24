@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/libsql/http";
 import env from "./env";
 import { todoBuckets, todoItemAttachments, todoItems, users } from "./schema";
 import { migrate } from "drizzle-orm/libsql/migrator";
