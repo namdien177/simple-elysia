@@ -1,6 +1,8 @@
-FROM oven/bun AS build
+FROM oven/bun AS base
 
 WORKDIR /app
+
+FROM base AS build
 
 # Cache packages installation
 COPY package.json package.json
@@ -23,9 +25,7 @@ RUN bun build \
 	--outfile server \
 	./src/index.ts
 
-FROM gcr.io/distroless/base
-
-WORKDIR /app
+FROM base AS runner
 
 COPY --from=build /app/server server
 COPY ./drizzle ./drizzle
