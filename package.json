@@ -18,6 +18,7 @@
     "@elysiajs/swagger": "^1.1.5",
     "@sinclair/typebox": "^0.33.17",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.35.3",
     "elysia": "1.1.25"
   },

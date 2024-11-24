@@ -50,6 +50,13 @@ const userModule = new Elysia({
 
             let avatar: Buffer | undefined;
             if (rawAvatar) {
+                // since rawAvatar cannot be verified to be an image with t.File yet
+                // https://github.com/elysiajs/elysia/issues/74
+                // we need to manually check the content type here to be image/*
+                if (!rawAvatar.type.startsWith("image/")) {
+                    return error(400, "Invalid avatar file");
+                }
+
                 // Read the uploaded avatar file
                 avatar = Buffer.from(await rawAvatar.arrayBuffer());
             }
@@ -86,7 +93,6 @@ const userModule = new Elysia({
                 password: t.Optional(t.String()),
                 avatar: t.File({
                     maxSize: "5m",
-                    type: "image/*",
                 }),
             }),
             summary: "Update User Profile",

@@ -1,9 +1,13 @@
-import { drizzle } from "drizzle-orm/bun-sqlite";
+import { drizzle } from "drizzle-orm/libsql";
 import env from "./env";
-import { todoItemAttachments, todoItems, todoBuckets, users } from "./schema";
-import { migrate } from "drizzle-orm/bun-sqlite/migrator";
+import { todoBuckets, todoItemAttachments, todoItems, users } from "./schema";
+import { migrate } from "drizzle-orm/libsql/migrator";
 
-const db = drizzle(env.DB_FILE_NAME, {
+const db = drizzle({
+    connection: {
+        url: env.TURSO_CONNECTION_URL,
+        authToken: env.TURSO_AUTH_TOKEN,
+    },
     schema: {
         users,
         todoBuckets,
@@ -12,6 +16,6 @@ const db = drizzle(env.DB_FILE_NAME, {
     },
 });
 
-migrate(db, { migrationsFolder: "drizzle" });
+void migrate(db, { migrationsFolder: "drizzle" });
 
 export default db;
