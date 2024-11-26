@@ -6,8 +6,6 @@ import * as bun from "bun";
 
 const envSchema = t.Object({
     AUTH_SECRET: t.String({ minLength: 2 }),
-    TURSO_CONNECTION_URL: t.String({ minLength: 2 }),
-    TURSO_AUTH_TOKEN: t.String({ minLength: 2 }),
 });
 
 export type ENV = Static<typeof envSchema>;
