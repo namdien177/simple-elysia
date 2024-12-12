@@ -24,6 +24,7 @@ const app = new Elysia()
     .use(bearer())
     .use(
         swagger({
+            provider: 'swagger-ui',
             documentation: {
                 tags: [
                     { name: "Auth", description: "Authentication endpoints" },
