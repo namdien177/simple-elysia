@@ -56,9 +56,12 @@ const bucketItemModule = new Elysia({
                     async ({ Bucket, query }) => {
                         const { page, limit, query: searchQuery, done } = query;
 
-                        type KeyofTodoItems = keyof typeof todoItems.$inferSelect;
+                        type KeyofTodoItems =
+                            keyof typeof todoItems.$inferSelect;
 
-                        const conditionsFn = (tb: Pick<typeof todoItems, KeyofTodoItems>) => {
+                        const conditionsFn = (
+                            tb: Pick<typeof todoItems, KeyofTodoItems>,
+                        ) => {
                             const filters: Array<SQLWrapper> = [];
                             filters.push(eq(tb.bucketId, Bucket.id));
                             if (searchQuery) {
@@ -70,7 +73,7 @@ const bucketItemModule = new Elysia({
                                 filters.push(eq(tb.done, done === 1));
                             }
                             return and(...filters);
-                        }
+                        };
 
                         // Fetch todo items
                         const items = await db.query.todoItems.findMany({
@@ -78,13 +81,14 @@ const bucketItemModule = new Elysia({
                             limit,
                             offset: (page - 1) * limit,
                         });
-                        const [total] = await db.select({count: count()})
+                        const [total] = await db
+                            .select({ count: count() })
                             .from(todoItems)
-                            .where(conditionsFn(todoItems))
+                            .where(conditionsFn(todoItems));
 
                         return {
                             data: items,
-                            total: total?.count ?? 0
+                            total: total?.count ?? 0,
                         };
                     },
                     {
@@ -124,7 +128,7 @@ const bucketItemModule = new Elysia({
                 .post(
                     "",
                     async ({ Bucket, body, error }) => {
-                        const { content, parentId } = body;
+                        const { content, deadline, parentId } = body;
 
                         // ensure the newly created todo only 1 level deep
                         if (parentId) {
@@ -154,6 +158,9 @@ const bucketItemModule = new Elysia({
                                 bucketId: Bucket.id,
                                 content,
                                 parentId,
+                                deadline: deadline
+                                    ? deadline.toISOString()
+                                    : null,
                                 done: false,
                             };
                             const [created] = await db
@@ -185,6 +192,12 @@ const bucketItemModule = new Elysia({
                             parentId: t.Optional(
                                 t.Number({
                                     description: "Parent item ID",
+                                }),
+                            ),
+                            deadline: t.Optional(
+                                t.Date({
+                                    description:
+                                        "Deadline of the todo item, Date in ISO format",
                                 }),
                             ),
                         }),

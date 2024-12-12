@@ -24,7 +24,7 @@ const app = new Elysia()
     .use(bearer())
     .use(
         swagger({
-            provider: 'swagger-ui',
+            // provider: 'swagger-ui',
             documentation: {
                 tags: [
                     { name: "Auth", description: "Authentication endpoints" },
@@ -49,5 +49,7 @@ const app = new Elysia()
     .use(bucketItemModule)
     .listen(process.env.PORT ?? 3000, (server) => {
         console.log(`Server started on port ${server.port}`);
-        console.log(`Swagger UI available at http://${server.hostname}:${server.port}/swagger`);
+        console.log(
+            `Swagger UI available at http://${server.hostname}:${server.port}/swagger`,
+        );
     });

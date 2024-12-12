@@ -49,6 +49,7 @@ export const todoItems = sqliteTable("todo_items", {
         .notNull()
         .default(sql`(current_timestamp)`)
         .$type<DateString>(),
+    deadline: text("deadline").$type<DateString | null>(),
     updatedAt: text("updated_at").$type<DateString | null>(),
 });
 
