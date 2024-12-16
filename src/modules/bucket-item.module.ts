@@ -225,7 +225,7 @@ const bucketItemModule = new Elysia({
                                 "",
                                 async ({ Bucket, params, body, error }) => {
                                     const itemId = params.itemId;
-                                    const { content, done } = body;
+                                    const { content, done, deadline } = body;
 
                                     // ensure the item exists
                                     const item =
@@ -249,6 +249,9 @@ const bucketItemModule = new Elysia({
                                             .set({
                                                 content,
                                                 done,
+                                                deadline: deadline
+                                                    ? deadline.toISOString()
+                                                    : null,
                                             })
                                             .where(eq(todoItems.id, itemId))
                                             .execute();
@@ -276,6 +279,12 @@ const bucketItemModule = new Elysia({
                                             t.Boolean({
                                                 description:
                                                     "Done status of the todo item",
+                                            }),
+                                        ),
+                                        deadline: t.Optional(
+                                            t.Date({
+                                                description:
+                                                    "Deadline of the todo item, Date in ISO format",
                                             }),
                                         ),
                                     }),
